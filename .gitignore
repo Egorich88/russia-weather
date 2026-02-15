@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.pyc
+venv/
+.env
+
+# Docker
+*.tar
+*.tar.gz
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Logs
+*.log
