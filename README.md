@@ -13,6 +13,8 @@
 
 ### 🏗️ Архитектура
 Система состоит из трех виртуальных машин, развернутых с помощью Vagrant на базе VirtualBox, и управляется через единый Jenkins-оркестратор.
+<img width="7528" height="5124" alt="deepseek_mermaid_20260215_a99722" src="https://github.com/user-attachments/assets/dda2964c-0a4b-4548-b5ab-5f06e5d03682" />
+
 ┌─────────────────────────────────────────────────────────────────┐
 │ VirtualBox Host │
 ├─────────────────────────────────────────────────────────────────┤
@@ -49,6 +51,8 @@
 │ │ :8000 │ │
 │ └─────────────┘ │
 └─────────────────────────────────────────────────────────────────┘
+<img width="2802" height="1466" alt="deepseek_mermaid_20260215_329634" src="https://github.com/user-attachments/assets/27171a0f-51a5-4d23-a7ed-ea4f6b5dcdce" />
+<img width="2051" height="1485" alt="deepseek_mermaid_20260215_c55049" src="https://github.com/user-attachments/assets/9454fb06-8234-4028-80e6-ebbecb101b26" />
 
 text
 
