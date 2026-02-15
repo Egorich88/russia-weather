@@ -110,3 +110,105 @@ vagrant up
 
 # 4. Запустить pipeline в Jenkins
 # deploy-monitoring → Build with Parameters → TARGET=all
+
+Запуск Weather Exporter (на хосте)
+cd exporter
+docker build -t weather-exporter .
+docker run -d -p 8000:8000 --name weather-exporter weather-exporter
+
+📊 Доступ к сервисам
+Сервис	Адрес	Логин	Пароль
+Jenkins	http://192.168.56.12:8080	admin	из консоли
+Prometheus	http://192.168.56.10:9090	-	-
+Grafana	http://192.168.56.11:3000	admin	admin
+Exporter	http://localhost:8000/metrics	-	-
+
+🔧 Команды для управления
+# Управление VM
+vagrant status           # статус всех VM
+vagrant up jenkins       # запустить конкретную VM
+vagrant halt grafana     # остановить VM
+vagrant destroy prometheus # удалить VM
+
+# Подключение к VM
+vagrant ssh jenkins
+vagrant ssh prometheus
+vagrant ssh grafana
+
+# Проверка логов
+vagrant logs prometheus
+
+📈 Примеры запросов в Prometheus
+# Температура по всем городам
+weather_temperature_celsius
+
+# Средняя температура по регионам
+avg by (region) (weather_temperature_celsius)
+
+# Самые холодные города
+topk(5, weather_temperature_celsius)
+
+# Самые теплые города
+bottomk(5, weather_temperature_celsius)
+
+🛠️ Технологический стек
+Виртуализация: VirtualBox, Vagrant
+ОС: Ubuntu 22.04 LTS
+CI/CD: Jenkins
+Автоматизация: Ansible
+Контейнеризация: Docker
+Мониторинг: Prometheus
+Визуализация: Grafana
+Языки: Python, Bash, Groovy
+Контроль версий: Git, GitHub
+
+📁 Структура проекта
+russia-weather-2026/
+├── Vagrantfile                    # Конфигурация VM
+├── README.md                      # Документация
+├── exporter/                      # Weather Exporter
+│   ├── Dockerfile
+│   ├── weather_exporter.py
+│   └── requirements.txt
+├── ansible/                       # Playbooks
+│   ├── inventory/
+│   ├── playbooks/
+│   │   ├── prometheus.yml
+│   │   └── grafana.yml
+│   └── templates/
+├── jenkins/                       # Jenkins pipeline
+│   └── Jenkinsfile
+├── grafana/                        # Дашборды
+│   └── dashboards/
+└── docs/                           # Документация
+    └── architecture.png
+
+🎯 Дорожная карта развития
+Базовая инфраструктура (3 VM)
+Jenkins + Ansible
+Prometheus + Grafana
+Weather Exporter
+Реальные данные с OpenWeatherMap API
+Дашборд с картой России
+Telegram/Slack алерты
+Автоматический деплой при push в GitHub
+Мониторинг 50+ городов
+
+🤝 Как внести вклад
+Fork репозитория
+Создайте ветку (git checkout -b feature/amazing-feature)
+Commit изменений (git commit -m 'Add amazing feature')
+Push в ветку (git push origin feature/amazing-feature)
+Откройте Pull Request
+
+📧 Контакты
+Автор: Хоменко Егор
+Email: georgia-2005@mail.ru
+GitHub: @Egorich88
+Telegram: @Prorok
+
+📄 Лицензия
+MIT License — свободное использование, модификация и распространение.
+
+⭐ Поддержка проекта
+Если проект оказался полезным, поставьте звезду на GitHub!
