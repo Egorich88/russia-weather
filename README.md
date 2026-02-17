@@ -3,7 +3,6 @@
 ## Полный DevOps-проект: Мониторинг погоды в 49 городах России
 
 ![img.png](img.png)
-ДИАГРАММА ПРОЕКТА "ПОГОДА ГОРОДОВ РОССИИ"
 [![Jenkins](https://img.shields.io/badge/Jenkins-CI%2FCD-red?logo=jenkins)](http://192.168.56.12:8080)
 [![Prometheus](https://img.shields.io/badge/Prometheus-Metrics-orange?logo=prometheus)](http://192.168.56.10:9090)
 [![Grafana](https://img.shields.io/badge/Grafana-Dashboards-brightgreen?logo=grafana)](http://192.168.56.11:3000)
@@ -15,8 +14,11 @@
 
 ### 🏗️ Архитектура
 Система состоит из трех виртуальных машин, развернутых с помощью Vagrant на базе VirtualBox, и управляется через единый Jenkins-оркестратор.
+ДИАГРАММА ПРОЕКТ
 <img width="7528" height="5124" alt="deepseek_mermaid_20260215_a99722" src="https://github.com/user-attachments/assets/dda2964c-0a4b-4548-b5ab-5f06e5d03682" />
+ТЕХНОЛОГИЧЕСКИЙ СТЕК
 <img width="2802" height="1466" alt="deepseek_mermaid_20260215_329634" src="https://github.com/user-attachments/assets/27171a0f-51a5-4d23-a7ed-ea4f6b5dcdce" />
+СТАТИСТИКА ПО РЕГИОНАМ
 <img width="2051" height="1485" alt="deepseek_mermaid_20260215_c55049" src="https://github.com/user-attachments/assets/9454fb06-8234-4028-80e6-ebbecb101b26" />
 
 text
