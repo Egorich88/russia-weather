@@ -64,17 +64,11 @@ CITY_IDS = {
 # Публичный эндпоинт Gismeteo (без токена)
 BASE_URL = "https://www.gismeteo.com/api/v2/weather/current/{}"
 
-# --- Метрики Prometheus ---
-# (существующие + новые)
-temperature_gauge = Gauge('weather_temp_celsius', 'Температура воздуха', ['city'])
-humidity_gauge    = Gauge('weather_humidity_percent', 'Относительная влажность', ['city'])
-pressure_gauge    = Gauge('weather_pressure_mmhg', 'Атмосферное давление (мм рт. ст.)', ['city'])
-wind_speed_gauge  = Gauge('weather_wind_speed_ms', 'Скорость ветра (м/с)', ['city'])
-feels_like_gauge  = Gauge('weather_feels_like_celsius', 'Ощущаемая температура', ['city'])
-cloudiness_gauge  = Gauge('weather_cloudiness_percent', 'Облачность (%)', ['city'])
+# Метрики Prometheus
+temperature_gauge = Gauge('weather_temp_celsius', 'Температура в городах России', ['city'])
+humidity_gauge = Gauge('weather_humidity_percent', 'Влажность в городах России', ['city'])
 
 def fetch_weather(city_name, city_id):
-    """Получить все метрики по ID города"""
     url = BASE_URL.format(city_id)
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -85,47 +79,33 @@ def fetch_weather(city_name, city_id):
         resp = requests.get(url, headers=headers, timeout=10)
         resp.raise_for_status()
         data = resp.json()
-
-        # Основные метрики (обязательные)
+        # Извлекаем температуру из data['temperature']['air']['C']
         temp = data['temperature']['air']['C']
+        # Извлекаем влажность из data['humidity']['percent']
         hum = data['humidity']['percent']
-
-        # Дополнительные (с проверкой на существование)
-        pressure = data.get('pressure', {}).get('mm_hg_atm')
-        wind_speed = data.get('wind', {}).get('speed', {}).get('m_s')
-        feels_like = data.get('temperature', {}).get('comfort', {}).get('C')
-        cloudiness = data.get('cloudiness', {}).get('percent')
-
-        return temp, hum, pressure, wind_speed, feels_like, cloudiness
+        return temp, hum
     except Exception as e:
         print(f"Ошибка для {city_name} (ID {city_id}): {e}")
-        return None, None, None, None, None, None
+        return None, None
 
 def update_metrics():
-    """Обновить все метрики для всех городов"""
     for city, city_id in CITY_IDS.items():
-        t, h, p, w, f, c = fetch_weather(city, city_id)
+        t, h = fetch_weather(city, city_id)
         if t is not None:
             temperature_gauge.labels(city=city).set(t)
             if h is not None:
                 humidity_gauge.labels(city=city).set(h)
-            if p is not None:
-                pressure_gauge.labels(city=city).set(p)
-            if w is not None:
-                wind_speed_gauge.labels(city=city).set(w)
-            if f is not None:
-                feels_like_gauge.labels(city=city).set(f)
-            if c is not None:
-                cloudiness_gauge.labels(city=city).set(c)
-            print(f"{city}: {t}°C, влажность {h}%, давление {p} мм рт.ст., ветер {w} м/с, ощущается {f}°C, облачность {c}%")
+            else:
+                # Если влажность не пришла, можно пропустить или установить 0
+                print(f"Влажность для {city} не получена")
         else:
             print(f"Не удалось получить данные для {city}")
-        time.sleep(1)  # вежливая пауза между городами
+        time.sleep(1)
 
 if __name__ == "__main__":
-    print("Запуск Weather Exporter (расширенная версия)")
+    print("Запуск Weather Exporter с данными Gismeteo (v2, без токена)")
     start_http_server(8000)
     while True:
         update_metrics()
         print("--- Цикл обновления завершён. Следующий через 10 минут ---")
-        time.sleep(600)
+        time.sleep(600)  # обновление раз в 10 минут
