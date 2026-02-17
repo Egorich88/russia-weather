@@ -74,28 +74,25 @@ feels_like_gauge  = Gauge('weather_feels_like_celsius', 'Ощущаемая те
 cloudiness_gauge  = Gauge('weather_cloudiness_percent', 'Облачность (%)', ['city'])
 
 def fetch_weather(city_name, city_id):
-    """Получить все метрики по ID города"""
     url = BASE_URL.format(city_id)
     headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
         "Accept": "application/json, text/plain, */*",
         "Referer": "https://www.gismeteo.com/",
     }
     try:
         resp = requests.get(url, headers=headers, timeout=10)
-        resp.raise_for_status()
+        print(f"Ответ для {city_name}: статус {resp.status_code}")
         data = resp.json()
-
-        # Основные метрики (обязательные)
+        print(f"Ключи ответа: {list(data.keys())}")
+        # принудительно покажем всю структуру
+        print(f"Полный ответ: {data}")
         temp = data['temperature']['air']['C']
         hum = data['humidity']['percent']
-
-        # Дополнительные (с проверкой на существование)
         pressure = data.get('pressure', {}).get('mm_hg_atm')
         wind_speed = data.get('wind', {}).get('speed', {}).get('m_s')
         feels_like = data.get('temperature', {}).get('comfort', {}).get('C')
         cloudiness = data.get('cloudiness', {}).get('percent')
-
         return temp, hum, pressure, wind_speed, feels_like, cloudiness
     except Exception as e:
         print(f"Ошибка для {city_name} (ID {city_id}): {e}")
