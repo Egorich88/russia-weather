@@ -77,21 +77,15 @@ def fetch_weather(city_name, city_id):
     }
     try:
         resp = requests.get(url, headers=headers, timeout=10)
-        print(f"Статус для {city_name}: {resp.status_code}")
-        if resp.status_code != 200:
-            print(resp.text[:200])
-            return None, None
+        resp.raise_for_status()
         data = resp.json()
-        print(f"Ключи верхнего уровня: {list(data.keys())}")
-        if 'temperature' in data:
-            print(f"Температура: {data['temperature']}")
-        else:
-            print("Нет температуры")
-        temp = data['temperature']['C']
+        # Извлекаем температуру из data['temperature']['air']['C']
+        temp = data['temperature']['air']['C']
+        # Извлекаем влажность из data['humidity']['percent']
         hum = data['humidity']['percent']
         return temp, hum
     except Exception as e:
-        print(f"Ошибка для {city_name}: {e}")
+        print(f"Ошибка для {city_name} (ID {city_id}): {e}")
         return None, None
 
 def update_metrics():
