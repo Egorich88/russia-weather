@@ -69,7 +69,6 @@ temperature_gauge = Gauge('weather_temp_celsius', 'Температура в г�
 humidity_gauge = Gauge('weather_humidity_percent', 'Влажность в городах России', ['city'])
 
 def fetch_weather(city_name, city_id):
-    """Получить температуру и влажность по ID города"""
     url = BASE_URL.format(city_id)
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -78,8 +77,17 @@ def fetch_weather(city_name, city_id):
     }
     try:
         resp = requests.get(url, headers=headers, timeout=10)
-        resp.raise_for_status()
+        print(f"Статус ответа для {city_name}: {resp.status_code}")
+        if resp.status_code != 200:
+            print(f"Тело ответа: {resp.text[:200]}")
+            return None, None
         data = resp.json()
+        print(f"Ключи ответа: {list(data.keys())}")
+        # Проверим наличие вложенных ключей
+        if 'temperature' in data and 'air' in data['temperature']:
+            print(f"Температура: {data['temperature']['air']}")
+        else:
+            print(f"Нет температуры: {data}")
         temp = data['temperature']['air']['c']
         hum = data['humidity']['percent']
         return temp, hum
