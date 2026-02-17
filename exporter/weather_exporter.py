@@ -89,17 +89,15 @@ def fetch_weather(city_name, city_id):
         return None, None
 
 def update_metrics():
-    """Обновить все метрики"""
     for city, city_id in CITY_IDS.items():
         t, h = fetch_weather(city, city_id)
-        if t is not None:
+        if t is not None and h is not None:
             temperature_gauge.labels(city=city).set(t)
             humidity_gauge.labels(city=city).set(h)
             print(f"{city}: {t}°C, влажность {h}%")
         else:
-            # При ошибке можно пропустить или оставить старое значение
-            pass
-        time.sleep(1)  # вежливая пауза между запросами к серверу
+            print(f"Пропускаем {city} из-за ошибки получения данных")
+        time.sleep(1)
 
 if __name__ == "__main__":
     print("Запуск Weather Exporter с данными Gismeteo (v2, без токена)")
