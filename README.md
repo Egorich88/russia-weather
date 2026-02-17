@@ -2,6 +2,8 @@
 
 ## Полный DevOps-проект: Мониторинг погоды в 49 городах России
 
+![img.png](img.png)
+ДИАГРАММА ПРОЕКТА "ПОГОДА ГОРОДОВ РОССИИ"
 [![Jenkins](https://img.shields.io/badge/Jenkins-CI%2FCD-red?logo=jenkins)](http://192.168.56.12:8080)
 [![Prometheus](https://img.shields.io/badge/Prometheus-Metrics-orange?logo=prometheus)](http://192.168.56.10:9090)
 [![Grafana](https://img.shields.io/badge/Grafana-Dashboards-brightgreen?logo=grafana)](http://192.168.56.11:3000)
