@@ -91,12 +91,15 @@ def fetch_weather(city_name, city_id):
 def update_metrics():
     for city, city_id in CITY_IDS.items():
         t, h = fetch_weather(city, city_id)
-        if t is not None and h is not None:
+        if t is not None:
             temperature_gauge.labels(city=city).set(t)
-            humidity_gauge.labels(city=city).set(h)
-            print(f"{city}: {t}°C, влажность {h}%")
+            if h is not None:
+                humidity_gauge.labels(city=city).set(h)
+            else:
+                # Если влажность не пришла, можно пропустить или установить 0
+                print(f"Влажность для {city} не получена")
         else:
-            print(f"Пропускаем {city} из-за ошибки получения данных")
+            print(f"Не удалось получить данные для {city}")
         time.sleep(1)
 
 if __name__ == "__main__":
