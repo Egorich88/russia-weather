@@ -23,7 +23,6 @@
 **СТАТИСТИКА ПО РЕГИОНАМ**
 <img width="2051" height="1485" alt="deepseek_mermaid_20260215_c55049" src="https://github.com/user-attachments/assets/9454fb06-8234-4028-80e6-ebbecb101b26" />
 
-
 ### ✅ Что сделано
 *   **Инфраструктура:** 3 VM (Jenkins, Prometheus, Grafana) под управлением Vagrant + VirtualBox.
 *   **Мониторинг:**
