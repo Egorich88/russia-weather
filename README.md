@@ -1,8 +1,9 @@
 # 🇷🇺 Russia Weather Monitoring
 
 ## Полный DevOps-проект: Мониторинг погоды в 49 городах России
+**Дашборд**
+<img width="2222" height="1038" alt="image" src="https://github.com/user-attachments/assets/bb3db67c-16d2-4373-9625-b7951e660cfa" />
 
-<img width="2212" height="1220" alt="image" src="https://github.com/user-attachments/assets/d45475d4-daa7-40a6-867d-65521961ca7d" />
 
 [![Jenkins](https://img.shields.io/badge/Jenkins-CI%2FCD-red?logo=jenkins)](http://192.168.56.12:8080)
 [![Prometheus](https://img.shields.io/badge/Prometheus-Metrics-orange?logo=prometheus)](http://192.168.56.10:9090)
