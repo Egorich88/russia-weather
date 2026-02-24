@@ -6,7 +6,7 @@ pipeline {
         CONTAINER_NAME = 'weather-exporter'
         EXPORTER_PORT = '8000'
         EXPORTER_DIR = 'exporter'
-        GISMETEO_TOKEN = credentials('gismeteo-token')   // добавили токен
+        GISMETEO_TOKEN = credentials('gismeteo-token')
     }
 
     stages {
@@ -43,7 +43,8 @@ pipeline {
                           -p ${EXPORTER_PORT}:${EXPORTER_PORT} \\
                           -e GISMETEO_TOKEN=\$GISMETEO_TOKEN \\
                           ${DOCKER_IMAGE}:latest
-                """
+                    """
+                }
             }
         }
 
