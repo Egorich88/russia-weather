@@ -1,71 +1,74 @@
 #!/usr/bin/env python3
 import time
 import requests
+import os
 from prometheus_client import start_http_server, Gauge
 
-# Словарь городов: название -> ID (найденные на Gismeteo)
+# --- НАСТРОЙКИ (обязательно замените TOKEN) ---
+GISMETEO_TOKEN = os.getenv('GISMETEO_TOKEN')
+if not GISMETEO_TOKEN:
+    raise ValueError("Переменная окружения GISMETEO_TOKEN не установлена!")
+BASE_URL = "https://api.gismeteo.net/v4/weather/current"
+
+# --- Словарь городов (без изменений) ---
 CITY_IDS = {
-    "Москва": 4368,
-    "Санкт-Петербург": 4079,
-    "Новосибирск": 4690,
-    "Екатеринбург": 4517,
-    "Казань": 4362,
-    "Нижний Новгород": 4355,
-    "Челябинск": 4515,
-    "Омск": 3988,
-    "Самара": 4618,
-    "Ростов-на-Дону": 4601,
-    "Уфа": 4520,
-    "Красноярск": 4678,
-    "Пермь": 4508,
-    "Воронеж": 4586,
-    "Волгоград": 4585,
-    "Краснодар": 4526,
-    "Саратов": 4620,
-    "Тюмень": 4521,
-    "Тольятти": 4623,
-    "Ижевск": 4451,
-    "Барнаул": 4647,
-    "Ульяновск": 4625,
-    "Иркутск": 4693,
-    "Хабаровск": 4745,
-    "Ярославль": 4372,
-    "Владивосток": 4743,
-    "Махачкала": 4467,
-    "Томск": 4697,
-    "Оренбург": 4511,
-    "Кемерово": 4696,
-    "Новокузнецк": 4695,
-    "Рязань": 4357,
-    "Астрахань": 4578,
-    "Набережные Челны": 4463,
-    "Пенза": 4605,
-    "Липецк": 4353,
-    "Киров": 4435,
-    "Чебоксары": 4359,
-    "Тула": 4361,
-    "Калининград": 4236,
-    "Курск": 4575,
-    "Севастополь": 5146,
-    "Сочи": 4528,
-    "Симферополь": 5145,
-    "Мурманск": 4123,
-    "Архангельск": 4179,
-    "Якутск": 4723,
-    "Петропавловск-Камчатский": 4763,
-    "Магадан": 4748,
-    "Анадырь": 4776,
-    "Южно-Сахалинск": 4754,
-    "Комсомольск-на-Амуре": 4746,
-    "Благовещенск": 4740,
-    "Тында": 4744,
+    "Москва": "москва",
+    "Санкт-Петербург": "санкт-петербург",
+    "Новосибирск": "новосибирск",
+    "Екатеринбург": "екатеринбург",
+    "Казань": "казань",
+    "Нижний Новгород": "нижний новгород",
+    "Челябинск": "челябинск",
+    "Омск": "омск",
+    "Самара": "самара",
+    "Ростов-на-Дону": "ростов-на-дону",
+    "Уфа": "уфа",
+    "Красноярск": "красноярск",
+    "Пермь": "пермь",
+    "Воронеж": "воронеж",
+    "Волгоград": "волгоград",
+    "Краснодар": "краснодар",
+    "Саратов": "саратов",
+    "Тюмень": "тюмень",
+    "Тольятти": "тольятти",
+    "Ижевск": "ижевск",
+    "Барнаул": "барнаул",
+    "Ульяновск": "ульяновск",
+    "Иркутск": "иркутск",
+    "Хабаровск": "хабаровск",
+    "Ярославль": "ярославль",
+    "Владивосток": "владивосток",
+    "Махачкала": "махачкала",
+    "Томск": "томск",
+    "Оренбург": "оренбург",
+    "Кемерово": "кемерово",
+    "Новокузнецк": "новокузнецк",
+    "Рязань": "рязань",
+    "Астрахань": "астрахань",
+    "Набережные Челны": "набережные челны",
+    "Пенза": "пенза",
+    "Липецк": "липецк",
+    "Киров": "киров",
+    "Чебоксары": "чебоксары",
+    "Тула": "тула",
+    "Калининград": "калининград",
+    "Курск": "курск",
+    "Севастополь": "севастополь",
+    "Сочи": "сочи",
+    "Симферополь": "симферополь",
+    "Мурманск": "мурманск",
+    "Архангельск": "архангельск",
+    "Якутск": "якутск",
+    "Петропавловск-Камчатский": "петропавловск-камчатский",
+    "Магадан": "магадан",
+    "Анадырь": "анадырь",
+    "Южно-Сахалинск": "южно-сахалинск",
+    "Комсомольск-на-Амуре": "комсомольск-на-амуре",
+    "Благовещенск": "благовещенск",
+    "Тында": "тында",
 }
 
-# Публичный эндпоинт Gismeteo (без токена)
-BASE_URL = "https://www.gismeteo.com/api/v2/weather/current/{}"
-
-# --- Метрики Prometheus ---
-# (существующие + новые)
+# --- Метрики Prometheus (без изменений) ---
 temperature_gauge = Gauge('weather_temp_celsius', 'Температура воздуха', ['city'])
 humidity_gauge    = Gauge('weather_humidity_percent', 'Относительная влажность', ['city'])
 pressure_gauge    = Gauge('weather_pressure_mmhg', 'Атмосферное давление (мм рт. ст.)', ['city'])
@@ -73,56 +76,78 @@ wind_speed_gauge  = Gauge('weather_wind_speed_ms', 'Скорость ветра 
 feels_like_gauge  = Gauge('weather_feels_like_celsius', 'Ощущаемая температура', ['city'])
 cloudiness_gauge  = Gauge('weather_cloudiness_percent', 'Облачность (%)', ['city'])
 
-def fetch_weather(city_name, city_id):
-    url = BASE_URL.format(city_id)
+def fetch_weather(city_name, city_query):
+    """Получает данные через официальное API Gismeteo v4 с токеном."""
     headers = {
+        "X-Gismeteo-Token": GISMETEO_TOKEN,
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-        "Accept": "application/json, text/plain, */*",
-        "Referer": "https://www.gismeteo.com/",
+        "Accept": "application/json",
     }
+    params = {
+        "name": city_query,
+        "locale": "ru-RU"
+    }
+
     try:
-        resp = requests.get(url, headers=headers, timeout=10)
-        print(f"Ответ для {city_name}: статус {resp.status_code}")
+        resp = requests.get(BASE_URL, headers=headers, params=params, timeout=10)
+        resp.raise_for_status()
         data = resp.json()
-        print(f"Ключи ответа: {list(data.keys())}")
-        # принудительно покажем всю структуру
-        print(f"Полный ответ: {data}")
-        temp = data['temperature']['air']['C']
-        hum = data['humidity']['percent']
-        pressure = data.get('pressure', {}).get('mm_hg_atm')
-        wind_speed = data.get('wind', {}).get('speed', {}).get('m_s')
-        feels_like = data.get('temperature', {}).get('comfort', {}).get('C')
-        cloudiness = data.get('cloudiness', {}).get('percent')
+
+        # Данные текущей погоды находятся в объекте 'current'
+        current = data.get('current', {})
+        if not current:
+            print(f"Нет данных current для {city_name}")
+            return None, None, None, None, None, None
+
+        # Извлекаем все нужные поля
+        temp = current.get('temperature_air')
+        hum = current.get('humidity')
+        pressure = current.get('pressure')
+        wind_speed = current.get('wind_speed')
+        feels_like = current.get('temperature_heat_index')  # Ощущаемая температура
+        cloudiness = current.get('cloudiness')
+
         return temp, hum, pressure, wind_speed, feels_like, cloudiness
+
+    except requests.exceptions.HTTPError as e:
+        if resp.status_code == 401:
+            print(f"Ошибка 401: Неверный токен для {city_name}. Проверьте GISMETEO_TOKEN.")
+        elif resp.status_code == 429:
+            print(f"Ошибка 429: Превышен лимит запросов для {city_name}. Увеличьте интервал.")
+        else:
+            print(f"HTTP ошибка для {city_name} (запрос '{city_query}'): {e}")
     except Exception as e:
-        print(f"Ошибка для {city_name} (ID {city_id}): {e}")
-        return None, None, None, None, None, None
+        print(f"Неизвестная ошибка для {city_name} (запрос '{city_query}'): {e}")
+
+    return None, None, None, None, None, None
 
 def update_metrics():
-    """Обновить все метрики для всех городов"""
-    for city, city_id in CITY_IDS.items():
-        t, h, p, w, f, c = fetch_weather(city, city_id)
+    """Обновляет метрики для всех городов (вызывается раз в час)."""
+    for city_name, city_query in CITY_IDS.items():
+        t, h, p, w, f, c = fetch_weather(city_name, city_query)
         if t is not None:
-            temperature_gauge.labels(city=city).set(t)
+            temperature_gauge.labels(city=city_name).set(t)
             if h is not None:
-                humidity_gauge.labels(city=city).set(h)
+                humidity_gauge.labels(city=city_name).set(h)
             if p is not None:
-                pressure_gauge.labels(city=city).set(p)
+                pressure_gauge.labels(city=city_name).set(p)
             if w is not None:
-                wind_speed_gauge.labels(city=city).set(w)
+                wind_speed_gauge.labels(city=city_name).set(w)
             if f is not None:
-                feels_like_gauge.labels(city=city).set(f)
+                feels_like_gauge.labels(city=city_name).set(f)
             if c is not None:
-                cloudiness_gauge.labels(city=city).set(c)
-            print(f"{city}: {t}°C, влажность {h}%, давление {p} мм рт.ст., ветер {w} м/с, ощущается {f}°C, облачность {c}%")
+                cloudiness_gauge.labels(city=city_name).set(c)
+            print(f"{city_name}: {t}°C, влажность {h}%, давление {p} мм рт.ст., "
+                  f"ветер {w} м/с, ощущается {f}°C, облачность {c}%")
         else:
-            print(f"Не удалось получить данные для {city}")
-        time.sleep(1)  # вежливая пауза между городами
+            print(f"Не удалось получить данные для {city_name}")
+        time.sleep(1)  # Небольшая пауза между запросами к API
 
 if __name__ == "__main__":
-    print("Запуск Weather Exporter (расширенная версия)")
+    print("Запуск Weather Exporter (Gismeteo API v4 с токеном)")
+    print(f"Лимит: ~720 запросов/месяц при интервале 1 час")
     start_http_server(8000)
     while True:
         update_metrics()
-        print("--- Цикл обновления завершён. Следующий через 10 минут ---")
-        time.sleep(600)
+        print("--- Цикл обновления завершён. Следующий через 1 час ---")
+        time.sleep(3600)  # 1 час = 3600 секунд
