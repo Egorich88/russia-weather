@@ -52,7 +52,7 @@ pipeline {
             steps {
                 sh """
                     sleep 5
-                    curl -f http://localhost:${EXPORTER_PORT}/metrics || exit 1
+                    curl -f http://192.168.56.12:${EXPORTER_PORT}/metrics || exit 1
                 """
             }
         }
