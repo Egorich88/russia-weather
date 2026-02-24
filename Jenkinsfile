@@ -2,18 +2,16 @@ pipeline {
     agent any
 
     environment {
-        // Имя Docker образа и контейнера
         DOCKER_IMAGE = 'weather-exporter'
         CONTAINER_NAME = 'weather-exporter'
         EXPORTER_PORT = '8000'
-        // Путь к папке экспортера внутри workspace
         EXPORTER_DIR = 'exporter'
+        GISMETEO_TOKEN = credentials('gismeteo-token')   // добавили токен
     }
 
     stages {
         stage('Checkout') {
             steps {
-                // Клонируем репозиторий (если используется Pipeline from SCM, этот шаг можно пропустить)
                 checkout scm
             }
         }
@@ -42,6 +40,7 @@ pipeline {
                       --name ${CONTAINER_NAME} \\
                       --restart always \\
                       -p ${EXPORTER_PORT}:${EXPORTER_PORT} \\
+                      -e GISMETEO_TOKEN='${GISMETEO_TOKEN}' \\   # передаём токен
                       ${DOCKER_IMAGE}:latest
                 """
             }
