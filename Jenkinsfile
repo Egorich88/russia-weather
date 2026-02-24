@@ -35,13 +35,14 @@ pipeline {
 
         stage('Run new container') {
             steps {
-                sh """
-                    docker run -d \\
-                      --name ${CONTAINER_NAME} \\
-                      --restart always \\
-                      -p ${EXPORTER_PORT}:${EXPORTER_PORT} \\
-                      -e GISMETEO_TOKEN='${GISMETEO_TOKEN}' \\   # передаём токен
-                      ${DOCKER_IMAGE}:latest
+                withEnv(["GISMETEO_TOKEN=${GISMETEO_TOKEN}"]) {
+                    sh """
+                        docker run -d \\
+                          --name ${CONTAINER_NAME} \\
+                          --restart always \\
+                          -p ${EXPORTER_PORT}:${EXPORTER_PORT} \\
+                          -e GISMETEO_TOKEN=\$GISMETEO_TOKEN \\
+                          ${DOCKER_IMAGE}:latest
                 """
             }
         }
