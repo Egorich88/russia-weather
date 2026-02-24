@@ -4,9 +4,9 @@
 **Дашборд**
 <img width="2226" height="1203" alt="image" src="https://github.com/user-attachments/assets/b59232a0-d66f-4403-9c71-e4011d94a177" />
 
-[![Jenkins](https://img.shields.io/badge/Jenkins-CI%2FCD-red?logo=jenkins)](http://192.168.56.12:8080)
-[![Prometheus](https://img.shields.io/badge/Prometheus-Metrics-orange?logo=prometheus)](http://192.168.56.10:9090)
-[![Grafana](https://img.shields.io/badge/Grafana-Dashboards-brightgreen?logo=grafana)](http://192.168.56.11:3000)
+[![Jenkins](https://img.shields.io/badge/Jenkins-CI%2FCD-red?logo=jenkins)])
+[![Prometheus](https://img.shields.io/badge/Prometheus-Metrics-orange?logo=prometheus)])
+[![Grafana](https://img.shields.io/badge/Grafana-Dashboards-brightgreen?logo=grafana)])
 [![Ansible](https://img.shields.io/badge/Ansible-Automation-blue?logo=ansible)](.)
 [![Vagrant](https://img.shields.io/badge/Vagrant-VM%20Management-1563FF?logo=vagrant)](.)
 
