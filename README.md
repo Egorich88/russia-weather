@@ -17,7 +17,7 @@
 Система состоит из трех виртуальных машин, развернутых с помощью Vagrant на базе VirtualBox, и управляется через единый Jenkins-оркестратор.
 
 **ДИАГРАММА ПРОЕКТА "ПОГОДА ГОРОДОВ РОССИИ"**
-<img width="7528" height="5124" alt="deepseek_mermaid_20260215_a99722" src="https://github.com/user-attachments/assets/dda2964c-0a4b-4548-b5ab-5f06e5d03682" />
+<img width="3750" height="4207" alt="deepseek_mermaid_20260225_52ccd4" src="https://github.com/user-attachments/assets/78919ea6-5b4a-4129-93ca-be96c1fa4936" />
 **ТЕХНОЛОГИЧЕСКИЙ СТЕК**
 <img width="2802" height="1466" alt="deepseek_mermaid_20260215_329634" src="https://github.com/user-attachments/assets/27171a0f-51a5-4d23-a7ed-ea4f6b5dcdce" />
 **СТАТИСТИКА ПО РЕГИОНАМ**
