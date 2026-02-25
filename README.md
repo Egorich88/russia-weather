@@ -18,8 +18,8 @@
 
 **ДИАГРАММА ПРОЕКТА "ПОГОДА ГОРОДОВ РОССИИ"**
 <img width="3750" height="4207" alt="deepseek_mermaid_20260225_52ccd4" src="https://github.com/user-attachments/assets/78919ea6-5b4a-4129-93ca-be96c1fa4936" />
-**ТЕХНОЛОГИЧЕСКИЙ СТЕК**
-<img width="2802" height="1466" alt="deepseek_mermaid_20260215_329634" src="https://github.com/user-attachments/assets/27171a0f-51a5-4d23-a7ed-ea4f6b5dcdce" />
+**ТЕХНОЛОГИЧЕСКИЙ СТЕК (древовидная структура)**
+<img width="4293" height="2269" alt="deepseek_mermaid_20260225_a30f4b" src="https://github.com/user-attachments/assets/190b8ab2-4abd-421c-abe7-a65eded7f3d0" />
 **СТАТИСТИКА ПО РЕГИОНАМ**
 <img width="2051" height="1485" alt="deepseek_mermaid_20260215_c55049" src="https://github.com/user-attachments/assets/9454fb06-8234-4028-80e6-ebbecb101b26" />
 
