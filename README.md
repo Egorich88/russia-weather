@@ -3,8 +3,7 @@
 ## Полный DevOps-проект: Мониторинг погоды в 54 городах России
 
 **Дашборд**
-<img width="2220" height="1128" alt="image" src="https://github.com/user-attachments/assets/ed95c4b9-2dd3-402b-982e-33292658ed06" />
-
+<img width="2225" height="1260" alt="image" src="https://github.com/user-attachments/assets/abcda59c-3ed8-4917-8071-1e39c0b2bafb" />
 [![Jenkins](https://img.shields.io/badge/Jenkins-CI%2FCD-red?logo=jenkins)](.)
 [![Prometheus](https://img.shields.io/badge/Prometheus-Metrics-orange?logo=prometheus)](.)
 [![Grafana](https://img.shields.io/badge/Grafana-Dashboards-brightgreen?logo=grafana)](.)
