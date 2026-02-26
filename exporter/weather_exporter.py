@@ -190,22 +190,31 @@ def update_metrics():
         lon = str(coords["lon"])
 
         if t is not None:
-            temperature_gauge.labels(city=city_name, lat=lat, lon=lon).set(t)
-            if h is not None:
-                humidity_gauge.labels(city=city_name, lat=lat, lon=lon).set(h)
-            if p is not None:
-                pressure_gauge.labels(city=city_name, lat=lat, lon=lon).set(p)
-            if w is not None:
-                wind_speed_gauge.labels(city=city_name, lat=lat, lon=lon).set(w)
-            if f is not None:
-                feels_like_gauge.labels(city=city_name, lat=lat, lon=lon).set(f)
-            if c is not None:
-                cloudiness_gauge.labels(city=city_name, lat=lat, lon=lon).set(c)
-            print(f"{city_name}: {t}°C, влажность {h}%, давление {p} мм рт.ст., "
-                  f"ветер {w} м/с, ощущается {f}°C, облачность {c}%")
+            t_rounded = round(t)                # температура до целого
+            h_rounded = round(h) if h is not None else None  # влажность до целого
+            p_rounded = round(p) if p is not None else None  # давление до целого
+            w_rounded = round(w, 1) if w is not None else None  # скорость ветра с одним знаком
+            f_rounded = round(f) if f is not None else None    # ощущаемая температура до целого
+            c_rounded = round(c) if c is not None else None    # облачность до целого
+
+            temperature_gauge.labels(city=city_name, lat=lat, lon=lon).set(t_rounded)
+            if h_rounded is not None:
+                humidity_gauge.labels(city=city_name, lat=lat, lon=lon).set(h_rounded)
+            if p_rounded is not None:
+                pressure_gauge.labels(city=city_name, lat=lat, lon=lon).set(p_rounded)
+            if w_rounded is not None:
+                wind_speed_gauge.labels(city=city_name, lat=lat, lon=lon).set(w_rounded)
+            if f_rounded is not None:
+                feels_like_gauge.labels(city=city_name, lat=lat, lon=lon).set(f_rounded)
+            if c_rounded is not None:
+                cloudiness_gauge.labels(city=city_name, lat=lat, lon=lon).set(c_rounded)
+
+            print(f"{city_name}: {t_rounded}°C, влажность {h_rounded}%, "
+                  f"давление {p_rounded} мм рт.ст., ветер {w_rounded} м/с, "
+                  f"ощущается {f_rounded}°C, облачность {c_rounded}%")
         else:
             print(f"Не удалось получить данные для {city_name}")
-        time.sleep(1)  # Небольшая пауза между запросами к API
+        time.sleep(1)
 
 if __name__ == "__main__":
     print("Запуск Weather Exporter (Gismeteo API v4 с токеном)")
