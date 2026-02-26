@@ -193,7 +193,7 @@ def update_metrics():
             t_rounded = round(t)                # температура до целого
             h_rounded = round(h) if h is not None else None  # влажность до целого
             p_rounded = round(p) if p is not None else None  # давление до целого
-            w_rounded = round(w, 1) if w is not None else None  # скорость ветра с одним знаком
+            w_rounded = round(w, if w is not None else None  # скорость ветра до целого
             f_rounded = round(f) if f is not None else None    # ощущаемая температура до целого
             c_rounded = round(c) if c is not None else None    # облачность до целого
 
