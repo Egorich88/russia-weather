@@ -322,7 +322,8 @@ def update_metrics():
 
             # Обновляем текстовые метрики (Info)
             if icon is not None:
-                weather_icon_info.labels(city=city_name).info({'code': icon})
+                icon_url = f"/public/img/icons/gismeteo/{icon}.png"
+                weather_icon_info.labels(city=city_name).info({'code': icon, 'url': icon_url})
             if desc is not None:
                 weather_description_info.labels(city=city_name).info({'text': desc})
 
