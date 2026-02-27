@@ -10,6 +10,13 @@ if not GISMETEO_TOKEN:
     raise ValueError("Переменная окружения GISMETEO_TOKEN не установлена!")
 BASE_URL = "https://api.gismeteo.net/v4/weather/current"
 
+# --- Словарь соответствия кодов иконок ---
+ICON_MAPPING = {
+    'd': 'd_c1',      # базовый день → малооблачно
+    'n': 'n_c1',      # базовая ночь → малооблачно ночью
+    # все остальные коды совпадают с названиями файлов
+}
+
 # --- Словарь городов: название -> поисковый запрос (90 городов) ---
 CITY_IDS = {
     # Центральный федеральный округ (17 городов)
@@ -320,19 +327,25 @@ def update_metrics():
             if f_rounded is not None:
                 feels_like_gauge.labels(city=city_name, lat=lat, lon=lon).set(f_rounded)
 
-            # Обновляем текстовые метрики (Info)
+            # --- ОБРАБОТКА ИКОНОК С МАППИНГОМ ---
             if icon is not None:
-                icon_url = f"/public/img/icons/gismeteo/{icon}.png"
+                # Применяем маппинг для базовых кодов
+                mapped_icon = ICON_MAPPING.get(icon, icon)
+
+                icon_url = f"/public/img/icons/gismeteo/{mapped_icon}.png"
                 icon_html = f"<img src='{icon_url}' style='width:30px; height:30px;'>"
                 weather_icon_info.labels(city=city_name).info({
-                    'code': icon,
+                    'code': mapped_icon,
+                    'original_code': icon,  # сохраняем оригинальный код для отладки
                     'url': icon_url,
-                    'html': icon_html  # <-- новое поле с HTML-кодом
+                    'html': icon_html
                 })
+
+            # Обновляем описание погоды
             if desc is not None:
                 weather_description_info.labels(city=city_name).info({'text': desc})
 
-            print(f"✅ {city_name}: {t_rounded}°C, ветер {w_rounded} м/с, иконка {icon}, описание: {desc}")
+            print(f"✅ {city_name}: {t_rounded}°C, ветер {w_rounded} м/с, иконка {icon} → {mapped_icon if icon else 'None'}, описание: {desc}")
             success_count += 1
         else:
             print(f"⚠️ {city_name}: данные не получены (сохранены предыдущие значения)")
@@ -343,7 +356,7 @@ def update_metrics():
     print(f"--- Цикл завершён. Успешно: {success_count}, ошибок: {error_count} ---")
 
 if __name__ == "__main__":
-    print("Запуск Weather Exporter (версия с иконками и описанием)")
+    print("Запуск Weather Exporter (версия с иконками и маппингом)")
     print(f"Всего городов: {len(CITY_IDS)}")
     start_http_server(8000)
     while True:
