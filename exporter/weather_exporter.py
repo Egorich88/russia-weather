@@ -2,7 +2,7 @@
 import time
 import requests
 import os
-from prometheus_client import start_http_server, Gauge, Counter
+from prometheus_client import start_http_server, Gauge, Info, Counter
 
 # --- НАСТРОЙКИ ---
 GISMETEO_TOKEN = os.getenv('GISMETEO_TOKEN')
@@ -31,7 +31,7 @@ CITY_IDS = {
     "Тула": "тула",
     "Ярославль": "ярославль",
 
-    # Северо-Западный федеральный округ (8 городов)
+    # Северо-Западный федеральный округ (9 городов)
     "Санкт-Петербург": "санкт-петербург",
     "Петрозаводск": "петрозаводск",
     "Сыктывкар": "сыктывкар",
@@ -63,7 +63,7 @@ CITY_IDS = {
     "Грозный": "грозный",
     "Ставрополь": "ставрополь",
 
-    # Приволжский федеральный округ (14 городов)
+    # Приволжский федеральный округ (16 городов)
     "Уфа": "уфа",
     "Йошкар-Ола": "йошкар-ола",
     "Саранск": "саранск",
@@ -91,7 +91,7 @@ CITY_IDS = {
     "Ханты-Мансийск": "ханты-мансийск",
     "Салехард": "салехард",
 
-    # Сибирский федеральный округ (11 городов)
+    # Сибирский федеральный округ (12 городов)
     "Горно-Алтайск": "горно-алтайск",
     "Барнаул": "барнаул",
     "Новокузнецк": "новокузнецк",
@@ -119,7 +119,7 @@ CITY_IDS = {
     "Тында": "тында",
 }
 
-# --- Координаты городов (для карты) ---
+# --- Координаты городов ---
 CITY_COORDS = {
     "Москва": {"lat": 55.7558, "lon": 37.6176},
     "Белгород": {"lat": 50.5977, "lon": 36.5858},
@@ -213,15 +213,18 @@ CITY_COORDS = {
     "Тында": {"lat": 55.1500, "lon": 124.7167},
 }
 
-# --- Метрики Prometheus с координатами ---
+# --- Метрики Prometheus (числовые) ---
 temperature_gauge = Gauge('weather_temp_celsius', 'Температура воздуха', ['city', 'lat', 'lon'])
 humidity_gauge    = Gauge('weather_humidity_percent', 'Относительная влажность', ['city', 'lat', 'lon'])
 pressure_gauge    = Gauge('weather_pressure_mmhg', 'Атмосферное давление (мм рт. ст.)', ['city', 'lat', 'lon'])
 wind_speed_gauge  = Gauge('weather_wind_speed_ms', 'Скорость ветра (м/с)', ['city', 'lat', 'lon'])
 feels_like_gauge  = Gauge('weather_feels_like_celsius', 'Ощущаемая температура', ['city', 'lat', 'lon'])
-cloudiness_gauge  = Gauge('weather_cloudiness_percent', 'Облачность (%)', ['city', 'lat', 'lon'])
 
-# --- Метрики для мониторинга работы самого экспортера ---
+# --- Метрики для текстовой информации ---
+weather_icon_info = Info('weather_icon', 'Код иконки погоды', ['city'])
+weather_description_info = Info('weather_description', 'Описание погоды', ['city'])
+
+# --- Счётчики ошибок ---
 errors_counter = Counter('weather_api_errors_total', 'Количество ошибок API', ['city'])
 success_counter = Counter('weather_api_success_total', 'Количество успешных запросов', ['city'])
 
@@ -245,66 +248,68 @@ def fetch_weather_with_retry(city_name, city_query, retries=3, timeout=15):
             current = data.get('current', {})
             if not current:
                 print(f"Предупреждение: нет данных 'current' для {city_name}")
-                return None, None, None, None, None, None
+                return None, None, None, None, None, None, None
 
             temp = current.get('temperature_air')
             hum = current.get('humidity')
             pressure = current.get('pressure')
             wind_speed = current.get('wind_speed')
             feels_like = current.get('temperature_heat_index')
-            cloudiness = current.get('cloudiness')
+            icon = current.get('icon_weather')
+            description = current.get('description')
 
             success_counter.labels(city=city_name).inc()
-            return temp, hum, pressure, wind_speed, feels_like, cloudiness
+            return temp, hum, pressure, wind_speed, feels_like, icon, description
 
         except requests.exceptions.Timeout:
             print(f"Таймаут для {city_name}, попытка {attempt+1}/{retries}")
             if attempt == retries - 1:
                 errors_counter.labels(city=city_name).inc()
-                return None, None, None, None, None, None
+                return None, None, None, None, None, None, None
             time.sleep(2)
 
         except requests.exceptions.HTTPError as e:
             if resp.status_code == 429:
                 print(f"Ошибка 429 (лимит) для {city_name}")
                 errors_counter.labels(city=city_name).inc()
-                return None, None, None, None, None, None
+                return None, None, None, None, None, None, None
             elif resp.status_code == 401:
                 print(f"Ошибка 401: Неверный токен для {city_name}")
                 errors_counter.labels(city=city_name).inc()
-                return None, None, None, None, None, None
+                return None, None, None, None, None, None, None
             else:
                 print(f"HTTP ошибка {resp.status_code} для {city_name}: {e}")
                 errors_counter.labels(city=city_name).inc()
-                return None, None, None, None, None, None
+                return None, None, None, None, None, None, None
 
         except Exception as e:
             print(f"Неизвестная ошибка для {city_name}: {e}")
             errors_counter.labels(city=city_name).inc()
-            return None, None, None, None, None, None
+            return None, None, None, None, None, None, None
 
-    return None, None, None, None, None, None
+    return None, None, None, None, None, None, None
 
 def update_metrics():
-    """Обновляет метрики для всех городов с сохранением старых значений при ошибках"""
+    """Обновляет метрики для всех городов"""
     print(f"\n--- Начало цикла обновления: {time.strftime('%Y-%m-%d %H:%M:%S')} ---")
     success_count = 0
     error_count = 0
 
     for city_name, city_query in CITY_IDS.items():
-        t, h, p, w, f, c = fetch_weather_with_retry(city_name, city_query)
+        t, h, p, w, f, icon, desc = fetch_weather_with_retry(city_name, city_query)
         coords = CITY_COORDS.get(city_name, {"lat": 0, "lon": 0})
         lat = str(coords["lat"])
         lon = str(coords["lon"])
 
         if t is not None:
+            # Округляем числовые метрики до целых
             t_rounded = round(t)
             h_rounded = round(h) if h is not None else None
             p_rounded = round(p) if p is not None else None
             w_rounded = round(w) if w is not None else None
             f_rounded = round(f) if f is not None else None
-            c_rounded = round(c) if c is not None else None
 
+            # Обновляем числовые метрики
             temperature_gauge.labels(city=city_name, lat=lat, lon=lon).set(t_rounded)
             if h_rounded is not None:
                 humidity_gauge.labels(city=city_name, lat=lat, lon=lon).set(h_rounded)
@@ -314,10 +319,14 @@ def update_metrics():
                 wind_speed_gauge.labels(city=city_name, lat=lat, lon=lon).set(w_rounded)
             if f_rounded is not None:
                 feels_like_gauge.labels(city=city_name, lat=lat, lon=lon).set(f_rounded)
-            if c_rounded is not None:
-                cloudiness_gauge.labels(city=city_name, lat=lat, lon=lon).set(c_rounded)
 
-            print(f"✅ {city_name}: {t_rounded}°C, влажность {h_rounded}%")
+            # Обновляем текстовые метрики (Info)
+            if icon is not None:
+                weather_icon_info.labels(city=city_name).info({'code': icon})
+            if desc is not None:
+                weather_description_info.labels(city=city_name).info({'text': desc})
+
+            print(f"✅ {city_name}: {t_rounded}°C, ветер {w_rounded} м/с, иконка {icon}, описание: {desc}")
             success_count += 1
         else:
             print(f"⚠️ {city_name}: данные не получены (сохранены предыдущие значения)")
@@ -328,7 +337,7 @@ def update_metrics():
     print(f"--- Цикл завершён. Успешно: {success_count}, ошибок: {error_count} ---")
 
 if __name__ == "__main__":
-    print("Запуск Weather Exporter (стабильная версия с сохранением метрик)")
+    print("Запуск Weather Exporter (версия с иконками и описанием)")
     print(f"Всего городов: {len(CITY_IDS)}")
     start_http_server(8000)
     while True:
