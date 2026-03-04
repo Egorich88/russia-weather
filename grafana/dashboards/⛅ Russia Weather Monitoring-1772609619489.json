@@ -1,0 +1,1218 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "Мониторинг погоды в 49 городах России",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 0,
+  "links": [
+    {
+      "asDropdown": false,
+      "icon": "external link",
+      "includeVars": false,
+      "keepTime": false,
+      "tags": [],
+      "targetBlank": true,
+      "title": "По данным Gismeteo",
+      "tooltip": "",
+      "type": "dashboards",
+      "url": ""
+    }
+  ],
+  "panels": [
+    {
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4.9,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 219,
+      "options": {
+        "code": {
+          "language": "go",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "<div style=\"display: flex; align-items: flex-start; justify-content: space-between; padding: 10px;\">\n    \n    <!-- Колонка 1: Город и ссылка Gismeteo -->\n    <div style=\"text-align: center; min-width: 150px;\">\n        <div style=\"font-size: 16px; color: #666; margin-bottom: 5px;\">Город</div>\n        <div style=\"font-size: 36px; font-weight: bold; line-height: 1.2;\">$city</div>\n        <!-- Пустой div для вертикального выравнивания с ощущением -->\n        <div style=\"height: 25px;\"></div>\n        <!-- Строка с ссылкой на Gismeteo на уровне ощущения -->\n        <div style=\"font-size: 16px; color: #666; margin-top: 0;\">\n            По данным <a href=\"https://www.gismeteo.ru\" target=\"_blank\" style=\"color: #3399ff; text-decoration: underline;\">www.Gismeteo.ru</a>\n        </div>\n    </div>\n    \n    <!-- Колонка 2: Сейчас и время -->\n    <div style=\"text-align: center; min-width: 80px;\">\n        <div style=\"font-size: 16px; color: #666; margin-bottom: 5px;\">Сейчас</div>\n        <div style=\"font-size: 36px; font-weight: bold; line-height: 1.2;\">${__from:date:HH:mm}</div>\n    </div>\n    \n    <!-- Колонка 3: Температура и ощущение -->\n    <div style=\"text-align: center; min-width: 120px;\">\n        <div style=\"font-size: 16px; color: #666; margin-bottom: 5px;\">Температура</div>\n        <div style=\"font-size: 48px; font-weight: bold; line-height: 1.2;\">${temperature}°C</div>\n        <div style=\"font-size: 16px; color: #666; margin-top: 5px;\">\n            По ощущению ${feels_like}°C\n        </div>\n    </div>\n    \n    <!-- Колонка 4: Иконка и описание -->\n    <div style=\"text-align: center; min-width: 120px;\">\n        <div style=\"font-size: 16px; color: #666; margin-bottom: 5px;\">Небо</div>\n        <img src=\"/public/img/icons/gismeteo/${icon_code}.png\" style=\"width: 70px; height: 70px; margin-bottom: 5px;\">\n        <div style=\"font-size: 16px; font-weight: 500; color: #666;\">${description}</div>\n    </div>\n    \n    <!-- Колонка 5: Влажность -->\n    <div style=\"text-align: center; min-width: 80px;\">\n        <div style=\"font-size: 16px; color: #666; margin-bottom: 5px;\">Влажность</div>\n        <div style=\"font-size: 24px; margin-bottom: 2px;\">💧</div>\n        <div style=\"font-size: 28px; font-weight: bold;\">${humidity}%</div>\n    </div>\n    \n    <!-- Колонка 6: Скорость ветра -->\n    <div style=\"text-align: center; min-width: 80px;\">\n        <div style=\"font-size: 16px; color: #666; margin-bottom: 5px;\">Скорость ветра</div>\n        <div style=\"font-size: 24px; margin-bottom: 2px;\">🌬️</div>\n        <div style=\"font-size: 28px; font-weight: bold;\">${wind_speed} м/с</div>\n    </div>\n    \n    <!-- Колонка 7: Давление -->\n    <div style=\"text-align: center; min-width: 80px; margin-right: 30px;\">\n        <div style=\"font-size: 16px; color: #666; margin-bottom: 5px;\">Давление</div>\n        <div style=\"font-size: 24px; margin-bottom: 2px;\">📊</div>\n        <div style=\"font-size: 28px; font-weight: bold;\">${pressure}</div>\n        <div style=\"font-size: 14px; color: #666;\">мм рт. ст.</div>\n    </div>\n    \n</div>",
+        "mode": "html"
+      },
+      "pluginVersion": "12.3.3",
+      "title": "",
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "afdarricxdybke"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "blue",
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 2,
+        "x": 0,
+        "y": 4.9
+      },
+      "id": 100,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.3.3",
+      "targets": [
+        {
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "count(weather_temp_celsius)",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "{{city}}",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Кол-во городов",
+      "transparent": true,
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "afdarricxdybke"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "blue",
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "celsius"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 2,
+        "x": 2,
+        "y": 4.9
+      },
+      "id": 101,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "min"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.3.3",
+      "targets": [
+        {
+          "expr": "min(weather_temp_celsius)",
+          "instant": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Мин. температура",
+      "transparent": true,
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "afdarricxdybke"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "red",
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "celsius"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 2,
+        "x": 4,
+        "y": 4.9
+      },
+      "id": 102,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "max"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.3.3",
+      "targets": [
+        {
+          "expr": "max(weather_temp_celsius)",
+          "instant": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Макс. температура",
+      "transparent": true,
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "afdarricxdybke"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "green",
+            "mode": "fixed"
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "celsius"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 2,
+        "x": 6,
+        "y": 4.9
+      },
+      "id": 103,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.3.3",
+      "targets": [
+        {
+          "expr": "avg(weather_temp_celsius)",
+          "instant": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Сред. температура",
+      "transparent": true,
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "afdarricxdybke"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "purple",
+            "mode": "fixed"
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 2,
+        "x": 8,
+        "y": 4.9
+      },
+      "id": 104,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.3.3",
+      "targets": [
+        {
+          "expr": "avg(weather_humidity_percent)",
+          "instant": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Сред. влажность",
+      "transparent": true,
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "afdarricxdybke"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "semi-dark-orange",
+            "mode": "fixed"
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 2,
+        "x": 10,
+        "y": 4.9
+      },
+      "id": 220,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.3.3",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "avg(weather_pressure_mmhg)",
+          "instant": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Сред. давление",
+      "transparent": true,
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "afdarricxdybke"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": false,
+            "footer": {
+              "reducers": []
+            },
+            "inspect": false,
+            "tooltip": {
+              "placement": "auto"
+            },
+            "wrapHeaderText": false,
+            "wrapText": true
+          },
+          "fieldMinMax": false,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "transparent",
+                "value": 0
+              },
+              {
+                "color": "#0623b5",
+                "value": -50
+              },
+              {
+                "color": "dark-blue",
+                "value": -30
+              },
+              {
+                "color": "semi-dark-blue",
+                "value": -20
+              },
+              {
+                "color": "blue",
+                "value": -10
+              },
+              {
+                "color": "light-blue",
+                "value": -5
+              },
+              {
+                "color": "super-light-blue",
+                "value": 0
+              },
+              {
+                "color": "light-yellow",
+                "value": 5
+              },
+              {
+                "color": "yellow",
+                "value": 10
+              },
+              {
+                "color": "semi-dark-yellow",
+                "value": 15
+              },
+              {
+                "color": "orange",
+                "value": 25
+              },
+              {
+                "color": "red",
+                "value": 30
+              },
+              {
+                "color": "semi-dark-red",
+                "value": 35
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Температура"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "celsius"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "thresholds"
+                }
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "applyToRow": false,
+                  "mode": "basic",
+                  "type": "color-background"
+                }
+              },
+              {
+                "id": "custom.align",
+                "value": "center"
+              },
+              {
+                "id": "custom.width"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Ощущается"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "celsius"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "thresholds"
+                }
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "applyToRow": false,
+                  "mode": "basic",
+                  "type": "color-background"
+                }
+              },
+              {
+                "id": "custom.align",
+                "value": "center"
+              },
+              {
+                "id": "custom.width"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Влажность"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "%"
+              },
+              {
+                "id": "custom.align",
+                "value": "center"
+              },
+              {
+                "id": "custom.width"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Условия"
+            },
+            "properties": [
+              {
+                "id": "custom.align",
+                "value": "center"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Небо"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "markdown"
+                }
+              },
+              {
+                "id": "custom.width"
+              },
+              {
+                "id": "custom.align",
+                "value": "center"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Город"
+            },
+            "properties": [
+              {
+                "id": "custom.width"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Давление"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "мм рт ст"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 24,
+        "w": 12,
+        "x": 12,
+        "y": 4.9
+      },
+      "id": 217,
+      "options": {
+        "cellHeight": "sm",
+        "enablePagination": false,
+        "frameIndex": 0,
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "12.3.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "afdarricxdybke"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "weather_icon_info",
+          "format": "table",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "afdarricxdybke"
+          },
+          "editorMode": "code",
+          "expr": "weather_description_info",
+          "format": "table",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "E"
+        },
+        {
+          "editorMode": "code",
+          "expr": "weather_temp_celsius",
+          "format": "table",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "afdarricxdybke"
+          },
+          "editorMode": "code",
+          "expr": "weather_feels_like_celsius",
+          "format": "table",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "afdarricxdybke"
+          },
+          "editorMode": "code",
+          "expr": "weather_humidity_percent",
+          "format": "table",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "afdarricxdybke"
+          },
+          "editorMode": "code",
+          "expr": "weather_pressure_mmhg",
+          "format": "table",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "F"
+        }
+      ],
+      "title": "",
+      "transformations": [
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "city",
+            "mode": "outer"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Value #B": false,
+              "Value #D": true,
+              "Value #E": true,
+              "__name__": true,
+              "__name__ 1": true,
+              "code": true,
+              "instance": true,
+              "instance 1": true,
+              "job": true,
+              "job 1": true,
+              "job 2": false,
+              "lat": true,
+              "lat 1": true,
+              "lat 2": false,
+              "lon": true,
+              "lon 2": false,
+              "original_code": true,
+              "service": true,
+              "service 2": false,
+              "url": true
+            },
+            "includeByName": {},
+            "indexByName": {},
+            "orderBy": [],
+            "orderByMode": "auto",
+            "renameByName": {
+              "Value": "Температура",
+              "Value #A": "Температура",
+              "Value #B": "Ощущается",
+              "Value #C": "Влажность",
+              "Value #D": "",
+              "Value #F": "Давление",
+              "city": "Город",
+              "code": "",
+              "html": "Небо",
+              "instance": "",
+              "instance 1": "",
+              "text": "Условия"
+            }
+          }
+        }
+      ],
+      "transparent": true,
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "afdarricxdybke"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "transparent",
+                "value": 0
+              },
+              {
+                "color": "#08dfff",
+                "value": -40
+              },
+              {
+                "color": "#68e6dd",
+                "value": -5
+              },
+              {
+                "color": "#f5f43a",
+                "value": 5
+              },
+              {
+                "color": "#ffbc57",
+                "value": 15
+              },
+              {
+                "color": "#ff0321",
+                "value": 25
+              }
+            ]
+          },
+          "unit": "celsius"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 21,
+        "w": 12,
+        "x": 0,
+        "y": 7.9
+      },
+      "id": 216,
+      "options": {
+        "basemap": {
+          "config": {
+            "server": "world-imagery",
+            "showLabels": true,
+            "theme": "light"
+          },
+          "layer-tooltip": true,
+          "name": "Layer 0",
+          "noRepeat": false,
+          "opacity": 1,
+          "type": "esri-xyz"
+        },
+        "controls": {
+          "mouseWheelZoom": true,
+          "showAttribution": false,
+          "showDebug": false,
+          "showMeasure": false,
+          "showScale": false,
+          "showZoom": true
+        },
+        "layers": [
+          {
+            "config": {
+              "showLegend": false,
+              "style": {
+                "color": {
+                  "field": "Value",
+                  "fixed": "#ffffff"
+                },
+                "opacity": 0,
+                "rotation": {
+                  "field": "Value",
+                  "fixed": 5,
+                  "max": 360,
+                  "min": -360,
+                  "mode": "clamped"
+                },
+                "size": {
+                  "fixed": 9,
+                  "max": 15,
+                  "min": 2
+                },
+                "symbol": {
+                  "fixed": "img/icons/marker/circle.svg",
+                  "mode": "fixed"
+                },
+                "symbolAlign": {
+                  "horizontal": "center",
+                  "vertical": "center"
+                },
+                "text": {
+                  "field": "Value",
+                  "fixed": "",
+                  "mode": "field"
+                },
+                "textConfig": {
+                  "fontSize": 13,
+                  "offsetX": 0,
+                  "offsetY": 0,
+                  "textAlign": "left",
+                  "textBaseline": "top"
+                }
+              }
+            },
+            "filterData": {
+              "id": "byRefId",
+              "options": "A"
+            },
+            "layer-tooltip": true,
+            "location": {
+              "mode": "auto"
+            },
+            "name": "Temperatura",
+            "tooltip": true,
+            "type": "markers"
+          },
+          {
+            "config": {
+              "showLegend": false,
+              "style": {
+                "color": {
+                  "fixed": "#ffffff"
+                },
+                "opacity": 1,
+                "rotation": {
+                  "field": "Value",
+                  "fixed": 8,
+                  "max": 360,
+                  "min": -360,
+                  "mode": "clamped"
+                },
+                "size": {
+                  "fixed": 2,
+                  "max": 15,
+                  "min": 2
+                },
+                "symbol": {
+                  "fixed": "img/icons/marker/circle.svg",
+                  "mode": "fixed"
+                },
+                "symbolAlign": {
+                  "horizontal": "left",
+                  "vertical": "bottom"
+                },
+                "text": {
+                  "field": "city",
+                  "fixed": "",
+                  "mode": "field"
+                },
+                "textConfig": {
+                  "fontSize": 12,
+                  "offsetX": 0,
+                  "offsetY": 0,
+                  "textAlign": "left",
+                  "textBaseline": "bottom"
+                }
+              }
+            },
+            "filterData": {
+              "id": "byRefId",
+              "options": "A"
+            },
+            "layer-tooltip": true,
+            "location": {
+              "latitude": "Value",
+              "longitude": "Value",
+              "mode": "auto"
+            },
+            "name": "City",
+            "tooltip": true,
+            "type": "markers"
+          }
+        ],
+        "tooltip": {
+          "mode": "details"
+        },
+        "view": {
+          "allLayers": true,
+          "id": "coords",
+          "lat": 63.686,
+          "lon": 102.745,
+          "noRepeat": false,
+          "shared": false,
+          "zoom": 3.2
+        }
+      },
+      "pluginVersion": "12.3.3",
+      "targets": [
+        {
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "weather_temp_celsius",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "🗺️ Карта температуры городов России",
+      "transparent": true,
+      "type": "geomap"
+    }
+  ],
+  "preload": false,
+  "refresh": "",
+  "schemaVersion": 42,
+  "tags": [
+    "weather",
+    "prometheus"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "text": "Анадырь",
+          "value": "Анадырь"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "afdarricxdybke"
+        },
+        "definition": "label_values(weather_temp_celsius, city)",
+        "includeAll": false,
+        "label": "Город:",
+        "name": "city",
+        "options": [],
+        "query": {
+          "query": "label_values(weather_temp_celsius, city)",
+          "refId": "Prometheus-city-Variable-Query"
+        },
+        "refresh": 1,
+        "regex": "",
+        "type": "query"
+      },
+      {
+        "current": {
+          "text": "Малооблачно",
+          "value": "Малооблачно"
+        },
+        "definition": "query_result(weather_description_info{city=\"$city\"})",
+        "hide": 2,
+        "name": "description",
+        "options": [],
+        "query": {
+          "qryType": 3,
+          "query": "query_result(weather_description_info{city=\"$city\"})",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "/.*text=\"([^\"]*)\".*/",
+        "type": "query"
+      },
+      {
+        "current": {
+          "text": "-35",
+          "value": "-35"
+        },
+        "definition": "query_result(weather_feels_like_celsius{city=\"$city\"})",
+        "hide": 2,
+        "name": "feels_like",
+        "options": [],
+        "query": {
+          "qryType": 3,
+          "query": "query_result(weather_feels_like_celsius{city=\"$city\"})",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".* (\\S+) \\d+$",
+        "type": "query"
+      },
+      {
+        "current": {
+          "text": "-24",
+          "value": "-24"
+        },
+        "definition": "query_result(weather_temp_celsius{city=\"$city\"})",
+        "hide": 2,
+        "name": "temperature",
+        "options": [],
+        "query": {
+          "qryType": 3,
+          "query": "query_result(weather_temp_celsius{city=\"$city\"})",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".* (\\S+) \\d+$",
+        "type": "query"
+      },
+      {
+        "current": {
+          "text": "51",
+          "value": "51"
+        },
+        "definition": "query_result(weather_humidity_percent{city=\"$city\"})",
+        "hide": 2,
+        "name": "humidity",
+        "options": [],
+        "query": {
+          "qryType": 3,
+          "query": "query_result(weather_humidity_percent{city=\"$city\"})",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".* (\\S+) \\d+$",
+        "type": "query"
+      },
+      {
+        "current": {
+          "text": "4",
+          "value": "4"
+        },
+        "definition": "query_result(weather_wind_speed_ms{city=\"$city\"})",
+        "hide": 2,
+        "name": "wind_speed",
+        "options": [],
+        "query": {
+          "qryType": 3,
+          "query": "query_result(weather_wind_speed_ms{city=\"$city\"})",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".* (\\S+) \\d+$",
+        "type": "query"
+      },
+      {
+        "current": {
+          "text": "766",
+          "value": "766"
+        },
+        "definition": "query_result(weather_pressure_mmhg{city=\"$city\"})",
+        "hide": 2,
+        "name": "pressure",
+        "options": [],
+        "query": {
+          "qryType": 3,
+          "query": "query_result(weather_pressure_mmhg{city=\"$city\"})",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".* (\\S+) \\d+$",
+        "type": "query"
+      },
+      {
+        "allowCustomValue": true,
+        "current": {
+          "text": "n_c1",
+          "value": "n_c1"
+        },
+        "definition": "query_result(weather_icon_info{city=\"$city\"})",
+        "hide": 2,
+        "includeAll": false,
+        "name": "icon_code",
+        "options": [],
+        "query": {
+          "qryType": 3,
+          "query": "query_result(weather_icon_info{city=\"$city\"})",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "/.*\\bcode=\"([^\"]*)\".*/",
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-1m",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "⛅ Russia Weather Monitoring",
+  "uid": "russia-weather-city-select",
+  "version": 438
+}
