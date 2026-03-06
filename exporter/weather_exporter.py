@@ -363,13 +363,16 @@ def update_metrics():
 
             # --- МЕТРИКА: Местное время (timestamp) ---
             if offset is not None:
-                # Используем ТЕКУЩЕЕ UTC время и добавляем смещение
+                # Используем текущее UTC время
                 now_utc = datetime.now(timezone.utc)
+                # Прибавляем смещение города (в минутах)
                 city_datetime = now_utc + timedelta(minutes=offset)
+                # Преобразуем в timestamp (секунды)
                 city_timestamp = int(city_datetime.timestamp())
+                # Сохраняем метрику
                 local_time_gauge.labels(city=city_name).set(city_timestamp)
 
-                # Отладка в логах
+                # Отладка в логах (для проверки)
                 print(f"   ⏰ {city_name}: UTC={now_utc.strftime('%H:%M')} +{offset}мин = {city_datetime.strftime('%H:%M')}")
 
             print(f"✅ {city_name}: {t_rounded}°C, ветер {w_rounded} м/с, иконка {icon} → {mapped_icon if icon else 'None'}, описание: {desc}, часовой пояс: {offset} мин")
