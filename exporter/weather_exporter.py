@@ -2,6 +2,7 @@
 import time
 import requests
 import os
+from datetime import datetime, timedelta, timezone
 from prometheus_client import start_http_server, Gauge, Info, Counter
 
 # --- НАСТРОЙКИ ---
@@ -235,8 +236,11 @@ weather_description_info = Info('weather_description', 'Описание пог�
 errors_counter = Counter('weather_api_errors_total', 'Количество ошибок API', ['city'])
 success_counter = Counter('weather_api_success_total', 'Количество успешных запросов', ['city'])
 
-# --- НОВАЯ МЕТРИКА: Часовой пояс ---
+# --- МЕТРИКА: Часовой пояс (смещение в минутах) ---
 timezone_offset_gauge = Gauge('weather_timezone_offset_minutes', 'Смещение часового пояса от UTC (в минутах)', ['city'])
+
+# --- НОВАЯ МЕТРИКА: Местное время (timestamp) ---
+local_time_gauge = Gauge('weather_local_time', 'Местное время города (timestamp)', ['city'])
 
 def fetch_weather_with_retry(city_name, city_query, retries=3, timeout=15):
     """Запрос к API с повторными попытками при ошибках, включая часовой пояс"""
@@ -353,9 +357,16 @@ def update_metrics():
             if desc is not None:
                 weather_description_info.labels(city=city_name).info({'text': desc})
 
-            # --- НОВАЯ МЕТРИКА: Часовой пояс ---
+            # --- МЕТРИКА: Часовой пояс (смещение) ---
             if offset is not None:
                 timezone_offset_gauge.labels(city=city_name).set(offset)
+
+            # --- МЕТРИКА: Местное время (timestamp) ---
+            if offset is not None:
+                now_utc = datetime.now(timezone.utc)
+                city_datetime = now_utc + timedelta(minutes=offset)
+                city_timestamp = int(city_datetime.timestamp())
+                local_time_gauge.labels(city=city_name).set(city_timestamp)
 
             print(f"✅ {city_name}: {t_rounded}°C, ветер {w_rounded} м/с, иконка {icon} → {mapped_icon if icon else 'None'}, описание: {desc}, часовой пояс: {offset} мин")
             success_count += 1
