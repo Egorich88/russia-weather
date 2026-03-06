@@ -2,7 +2,6 @@
 import time
 import requests
 import os
-from datetime import datetime, timedelta, timezone
 from prometheus_client import start_http_server, Gauge, Info, Counter
 
 # --- НАСТРОЙКИ ---
@@ -236,17 +235,8 @@ weather_description_info = Info('weather_description', 'Описание пог�
 errors_counter = Counter('weather_api_errors_total', 'Количество ошибок API', ['city'])
 success_counter = Counter('weather_api_success_total', 'Количество успешных запросов', ['city'])
 
-# --- МЕТРИКА: Часовой пояс (смещение в минутах) ---
-timezone_offset_gauge = Gauge('weather_timezone_offset_minutes', 'Смещение часового пояса от UTC (в минутах)', ['city'])
-
-# --- МЕТРИКА: Местное время (timestamp) ---
-local_time_gauge = Gauge('weather_local_time', 'Местное время города (timestamp)', ['city'])
-
-# --- НОВАЯ МЕТРИКА: Местное время строкой ---
-time_str_info = Info('weather_time_str', 'Местное время в формате ЧЧ:ММ', ['city'])
-
 def fetch_weather_with_retry(city_name, city_query, retries=3, timeout=15):
-    """Запрос к API с повторными попытками при ошибках, включая часовой пояс"""
+    """Запрос к API с повторными попытками при ошибках"""
     headers = {
         "X-Gismeteo-Token": GISMETEO_TOKEN,
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
@@ -263,14 +253,10 @@ def fetch_weather_with_retry(city_name, city_query, retries=3, timeout=15):
             resp.raise_for_status()
             data = resp.json()
 
-            # Получаем location для часового пояса
-            location = data.get('location', {})
-            offset = location.get('time_zone_offset', 0)  # в минутах
-
             current = data.get('current', {})
             if not current:
                 print(f"Предупреждение: нет данных 'current' для {city_name}")
-                return None, None, None, None, None, None, None, None, None
+                return None, None, None, None, None, None, None
 
             temp = current.get('temperature_air')
             hum = current.get('humidity')
@@ -281,35 +267,35 @@ def fetch_weather_with_retry(city_name, city_query, retries=3, timeout=15):
             description = current.get('description')
 
             success_counter.labels(city=city_name).inc()
-            return temp, hum, pressure, wind_speed, feels_like, icon, description, offset
+            return temp, hum, pressure, wind_speed, feels_like, icon, description
 
         except requests.exceptions.Timeout:
             print(f"Таймаут для {city_name}, попытка {attempt+1}/{retries}")
             if attempt == retries - 1:
                 errors_counter.labels(city=city_name).inc()
-                return None, None, None, None, None, None, None, None, None
+                return None, None, None, None, None, None, None
             time.sleep(2)
 
         except requests.exceptions.HTTPError as e:
             if resp.status_code == 429:
                 print(f"Ошибка 429 (лимит) для {city_name}")
                 errors_counter.labels(city=city_name).inc()
-                return None, None, None, None, None, None, None, None, None
+                return None, None, None, None, None, None, None
             elif resp.status_code == 401:
                 print(f"Ошибка 401: Неверный токен для {city_name}")
                 errors_counter.labels(city=city_name).inc()
-                return None, None, None, None, None, None, None, None, None
+                return None, None, None, None, None, None, None
             else:
                 print(f"HTTP ошибка {resp.status_code} для {city_name}: {e}")
                 errors_counter.labels(city=city_name).inc()
-                return None, None, None, None, None, None, None, None, None
+                return None, None, None, None, None, None, None
 
         except Exception as e:
             print(f"Неизвестная ошибка для {city_name}: {e}")
             errors_counter.labels(city=city_name).inc()
-            return None, None, None, None, None, None, None, None, None
+            return None, None, None, None, None, None, None
 
-    return None, None, None, None, None, None, None, None, None
+    return None, None, None, None, None, None, None
 
 def update_metrics():
     """Обновляет метрики для всех городов"""
@@ -318,7 +304,7 @@ def update_metrics():
     error_count = 0
 
     for city_name, city_query in CITY_IDS.items():
-        t, h, p, w, f, icon, desc, offset = fetch_weather_with_retry(city_name, city_query)
+        t, h, p, w, f, icon, desc = fetch_weather_with_retry(city_name, city_query)
         coords = CITY_COORDS.get(city_name, {"lat": 0, "lon": 0})
         lat = str(coords["lat"])
         lon = str(coords["lon"])
@@ -360,24 +346,7 @@ def update_metrics():
             if desc is not None:
                 weather_description_info.labels(city=city_name).info({'text': desc})
 
-            # --- МЕТРИКА: Часовой пояс (смещение) ---
-            if offset is not None:
-                timezone_offset_gauge.labels(city=city_name).set(offset)
-
-            # --- МЕТРИКА: Местное время (timestamp) ---
-            if offset is not None:
-                now_utc = datetime.now(timezone.utc)
-                city_datetime = now_utc + timedelta(minutes=offset)
-                city_timestamp = int(city_datetime.timestamp())
-                local_time_gauge.labels(city=city_name).set(city_timestamp)
-
-                # --- НОВАЯ СТРОКОВАЯ МЕТРИКА ---
-                time_str = city_datetime.strftime('%H:%M')
-                time_str_info.labels(city=city_name).info({'time': time_str})
-
-                print(f"   ⏰ {city_name}: UTC={now_utc.strftime('%H:%M')} +{offset}мин = {time_str}")
-
-            print(f"✅ {city_name}: {t_rounded}°C, ветер {w_rounded} м/с, иконка {icon} → {mapped_icon if icon else 'None'}, описание: {desc}, часовой пояс: {offset} мин")
+            print(f"✅ {city_name}: {t_rounded}°C, ветер {w_rounded} м/с, иконка {icon} → {mapped_icon if icon else 'None'}, описание: {desc}")
             success_count += 1
         else:
             print(f"⚠️ {city_name}: данные не получены (сохранены предыдущие значения)")
@@ -388,7 +357,7 @@ def update_metrics():
     print(f"--- Цикл завершён. Успешно: {success_count}, ошибок: {error_count} ---")
 
 if __name__ == "__main__":
-    print("Запуск Weather Exporter (версия с часовыми поясами, иконками и маппингом)")
+    print("Запуск Weather Exporter (версия без временных метрик)")
     print(f"Всего городов: {len(CITY_IDS)}")
     start_http_server(8000)
     while True:
