@@ -3,7 +3,7 @@
 ## Полный DevOps-проект: Мониторинг погоды в 90 городах России
 
 **Финальный дашборд**
-<img width="2232" height="1147" alt="image" src="https://github.com/user-attachments/assets/cc9d1491-00d4-4be8-ac11-ce5ed03a4c16" />
+<img width="2240" height="1142" alt="image" src="https://github.com/user-attachments/assets/f9c11935-0179-4c27-9655-7f2d92281c0c" />
 *(Скриншот актуального дашборда)*
 
 [![Jenkins](https://img.shields.io/badge/Jenkins-CI%2FCD-red?logo=jenkins)](.)
