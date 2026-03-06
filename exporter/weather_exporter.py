@@ -55,8 +55,70 @@ timezone_offset_gauge = Gauge('weather_timezone_offset_minutes', 'Смещени
 local_time_gauge = Gauge('weather_local_time', 'Местное время города (timestamp)', ['city'])
 
 def fetch_weather_with_retry(city_name, city_query, retries=3, timeout=15):
-    # (функция остаётся без изменений)
-    # ... ваш код
+    """Запрос к API с повторными попытками при ошибках, включая часовой пояс"""
+        headers = {
+            "X-Gismeteo-Token": GISMETEO_TOKEN,
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+            "Accept": "application/json",
+        }
+        params = {
+            "name": city_query,
+            "locale": "ru-RU"
+        }
+
+        for attempt in range(retries):
+            try:
+                resp = requests.get(BASE_URL, headers=headers, params=params, timeout=timeout)
+                resp.raise_for_status()
+                data = resp.json()
+
+                # Получаем location для часового пояса
+                location = data.get('location', {})
+                offset = location.get('time_zone_offset', 0)  # в минутах
+
+                current = data.get('current', {})
+                if not current:
+                    print(f"Предупреждение: нет данных 'current' для {city_name}")
+                    return None, None, None, None, None, None, None, None, None
+
+                temp = current.get('temperature_air')
+                hum = current.get('humidity')
+                pressure = current.get('pressure')
+                wind_speed = current.get('wind_speed')
+                feels_like = current.get('temperature_heat_index')
+                icon = current.get('icon_weather')
+                description = current.get('description')
+
+                success_counter.labels(city=city_name).inc()
+                return temp, hum, pressure, wind_speed, feels_like, icon, description, offset
+
+            except requests.exceptions.Timeout:
+                print(f"Таймаут для {city_name}, попытка {attempt+1}/{retries}")
+                if attempt == retries - 1:
+                    errors_counter.labels(city=city_name).inc()
+                    return None, None, None, None, None, None, None, None, None
+                time.sleep(2)
+
+            except requests.exceptions.HTTPError as e:
+                if resp.status_code == 429:
+                    print(f"Ошибка 429 (лимит) для {city_name}")
+                    errors_counter.labels(city=city_name).inc()
+                    return None, None, None, None, None, None, None, None, None
+                elif resp.status_code == 401:
+                    print(f"Ошибка 401: Неверный токен для {city_name}")
+                    errors_counter.labels(city=city_name).inc()
+                    return None, None, None, None, None, None, None, None, None
+                else:
+                    print(f"HTTP ошибка {resp.status_code} для {city_name}: {e}")
+                    errors_counter.labels(city=city_name).inc()
+                    return None, None, None, None, None, None, None, None, None
+
+            except Exception as e:
+                print(f"Неизвестная ошибка для {city_name}: {e}")
+                errors_counter.labels(city=city_name).inc()
+                return None, None, None, None, None, None, None, None, None
+
+        return None, None, None, None, None, None, None, None, None
 
 def update_metrics():
     print(f"\n--- Начало цикла обновления: {time.strftime('%Y-%m-%d %H:%M:%S')} ---")
