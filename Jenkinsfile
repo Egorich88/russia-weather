@@ -38,18 +38,17 @@ pipeline {
 
         stage('Run new container') {
             steps {
-                withEnv(["GISMETEO_TOKEN=${GISMETEO_TOKEN}"]) {
-                    sh """
-                        docker run -d \\
-                          --name ${CONTAINER_NAME} \\
-                          --restart always \\
-                          -p ${EXPORTER_PORT}:${EXPORTER_PORT} \\
-                          -e GISMETEO_TOKEN=\$GISMETEO_TOKEN \\
-                          ${DOCKER_IMAGE}:latest
-                    """
-                    echo '🚀 Новый контейнер успешно запущен'
-                }
+                sh """
+                    docker run -d \\
+                      --name ${CONTAINER_NAME} \\
+                      --restart always \\
+                      -p ${EXPORTER_PORT}:${EXPORTER_PORT} \\
+                      -e GISMETEO_TOKEN=\$GISMETEO_TOKEN \\
+                      ${DOCKER_IMAGE}:latest
+                """
+                echo '🚀 Новый контейнер успешно запущен'
             }
+        }
         }
 
         stage('Health check') {
