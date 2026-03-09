@@ -49,7 +49,6 @@ pipeline {
                 echo '🚀 Новый контейнер успешно запущен'
             }
         }
-        }
 
         stage('Health check') {
             steps {
