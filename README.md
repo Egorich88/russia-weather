@@ -4,7 +4,6 @@
 
 **Финальный дашборд**
 <img width="2240" height="1142" alt="image" src="https://github.com/user-attachments/assets/f9c11935-0179-4c27-9655-7f2d92281c0c" />
-*(Скриншот актуального дашборда)*
 
 [![Jenkins](https://img.shields.io/badge/Jenkins-CI%2FCD-red?logo=jenkins)](.)
 [![Prometheus](https://img.shields.io/badge/Prometheus-Metrics-orange?logo=prometheus)](.)
