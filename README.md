@@ -1,6 +1,6 @@
 # 🇷🇺 Russia Weather Monitoring
 
-## Полный DevOps-проект: Мониторинг погоды в 90 городах России
+## DevOps-проект: Мониторинг погоды в 90 городах России
 
 **Финальный дашборд**
 <img width="2240" height="1142" alt="image" src="https://github.com/user-attachments/assets/f9c11935-0179-4c27-9655-7f2d92281c0c" />
